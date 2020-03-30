@@ -3,7 +3,7 @@ using MumbleSharp.Audio;
 using MumbleSharp.Audio.Codecs;
 using MumbleSharp.Packets;
 using System;
-using NAudio.Wave;
+//using NAudio.Wave;
 
 namespace MumbleSharp.Model
 {
@@ -156,7 +156,7 @@ namespace MumbleSharp.Model
         }
 
         private readonly AudioDecodingBuffer _buffer;
-        public IWaveProvider Voice
+        public AudioDecodingBuffer Voice
         {
             get
             {

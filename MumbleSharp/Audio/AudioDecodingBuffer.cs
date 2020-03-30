@@ -1,5 +1,5 @@
 ﻿using MumbleSharp.Audio.Codecs;
-using NAudio.Wave;
+//using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 
@@ -8,12 +8,11 @@ namespace MumbleSharp.Audio
     /// <summary>
     /// Buffers up encoded audio packets and provides a constant stream of sound (silence if there is no more audio to decode)
     /// </summary>
-    public class AudioDecodingBuffer
-        : IWaveProvider
+    public class AudioDecodingBuffer// : IWaveProvider
     {
         private readonly int _sampleRate;
         private readonly ushort _frameSize;
-        public WaveFormat WaveFormat { get; private set; }
+        //public WaveFormat WaveFormat { get; private set; }
         private int _decodedOffset;
         private int _decodedCount;
         private readonly byte[] _decodedBuffer;
@@ -28,7 +27,7 @@ namespace MumbleSharp.Audio
         /// <param name="frameSize">Size of the frame in samples.</param>
         public AudioDecodingBuffer(int sampleRate = Constants.DEFAULT_AUDIO_SAMPLE_RATE, byte sampleBits = Constants.DEFAULT_AUDIO_SAMPLE_BITS, byte sampleChannels = Constants.DEFAULT_AUDIO_SAMPLE_CHANNELS, ushort frameSize = Constants.DEFAULT_AUDIO_FRAME_SIZE)
         {
-            WaveFormat = new WaveFormat(sampleRate, sampleBits, sampleChannels);
+            //WaveFormat = new WaveFormat(sampleRate, sampleBits, sampleChannels);
             _sampleRate = sampleRate;
             _frameSize = frameSize;
             _decodedBuffer = new byte[sampleRate * (sampleBits / 8) * sampleChannels];

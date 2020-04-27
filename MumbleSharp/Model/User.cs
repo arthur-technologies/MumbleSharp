@@ -156,13 +156,7 @@ namespace MumbleSharp.Model
         }
 
         private readonly AudioDecodingBuffer _buffer;
-        public AudioDecodingBuffer Voice
-        {
-            get
-            {
-                return _buffer;
-            }
-        }
+        public AudioDecodingBuffer Voice => _buffer;
 
         public void ReceiveEncodedVoice(byte[] data, long sequence, IVoiceCodec codec)
         {

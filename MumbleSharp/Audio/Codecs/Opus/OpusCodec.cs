@@ -6,8 +6,8 @@ namespace MumbleSharp.Audio.Codecs.Opus
     public class OpusCodec
         : IVoiceCodec
     {
-        private readonly OpusDecoder _decoder;
-        private readonly OpusEncoder _encoder;
+        private readonly Mumble.OpusDecoder _decoder;
+        private readonly Mumble.OpusEncoder _encoder;
         private readonly int _sampleRate;
         private readonly ushort _frameSize;
 
@@ -22,8 +22,10 @@ namespace MumbleSharp.Audio.Codecs.Opus
         {
             _sampleRate = sampleRate;
             _frameSize = frameSize;
-            _decoder = new OpusDecoder(sampleRate, channels) { EnableForwardErrorCorrection = true };
-            _encoder = new OpusEncoder(sampleRate, channels) { EnableForwardErrorCorrection = true };
+            _decoder = new Mumble.OpusDecoder(sampleRate, channels) {EnableForwardErrorCorrection = true};
+            _encoder = new Mumble.OpusEncoder(sampleRate, channels) { EnableForwardErrorCorrection = true };
+            //_decoder = new OpusDecoder(sampleRate, channels) { EnableForwardErrorCorrection = true };
+            //_encoder = new OpusEncoder(sampleRate, channels) { EnableForwardErrorCorrection = true };
         }
 
         public byte[] Decode(byte[] encodedData)
@@ -34,11 +36,12 @@ namespace MumbleSharp.Audio.Codecs.Opus
                 return null;
             }
 
-            int samples = OpusDecoder.GetSamples(encodedData, 0, encodedData.Length, _sampleRate);
+            int samples = Mumble.OpusDecoder.GetSamples(encodedData, 0, encodedData.Length, _sampleRate);
             if (samples < 1)
                 return null;
 
             byte[] dst = new byte[samples * sizeof(ushort)];
+            //_decoder.Decode(encodedData, 0, encodedData.Length, dst, 0);
             int length = _decoder.Decode(encodedData, 0, encodedData.Length, dst, 0);
             if (dst.Length != length)
                 Array.Resize(ref dst, length);
@@ -59,7 +62,7 @@ namespace MumbleSharp.Audio.Codecs.Opus
             var numberOfBytes = _encoder.FrameSizeInBytes(samples);
 
             byte[] dst = new byte[numberOfBytes];
-            int encodedBytes = _encoder.Encode(pcm.Array, pcm.Offset, dst, 0, samples);
+            int encodedBytes = _encoder.Encode( pcm.Array, pcm.Offset, dst, 0, samples);
 
             //without it packet will have huge zero-value-tale
             Array.Resize(ref dst, encodedBytes);

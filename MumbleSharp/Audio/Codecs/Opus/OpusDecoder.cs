@@ -55,14 +55,13 @@ namespace MumbleSharp.Audio.Codecs.Opus
                 outputSampleRate != 16000 &&
                 outputSampleRate != 24000 &&
                 outputSampleRate != 48000)
-                throw new ArgumentOutOfRangeException("outputSampleRate");
+                throw new ArgumentOutOfRangeException(nameof(outputSampleRate));
             if (outputChannelCount != 1 && outputChannelCount != 2)
-                throw new ArgumentOutOfRangeException("outputChannelCount");
+                throw new ArgumentOutOfRangeException(nameof(outputChannelCount));
 
-            IntPtr error;
-            _decoder = NativeMethods.opus_decoder_create(outputSampleRate, outputChannelCount, out error);
+            _decoder = NativeMethods.opus_decoder_create(outputSampleRate, outputChannelCount, out var error);
             if ((NativeMethods.OpusErrors)error != NativeMethods.OpusErrors.Ok)
-                throw new Exception(string.Format("Exception occured while creating decoder, {0}", ((NativeMethods.OpusErrors)error)));
+                throw new Exception($"Exception occured while creating decoder, {((NativeMethods.OpusErrors) error)}");
             _sampleSize = sizeof(ushort) * outputChannelCount;
         }
 

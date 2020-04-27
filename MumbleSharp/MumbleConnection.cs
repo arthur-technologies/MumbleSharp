@@ -67,7 +67,7 @@ namespace MumbleSharp
         public void Connect(string username, string password, string[] tokens, string serverName)
         {
             if (State != ConnectionStates.Disconnected)
-                throw new InvalidOperationException(string.Format("Cannot start connecting MumbleConnection when connection state is {0}", State));
+                throw new InvalidOperationException($"Cannot start connecting MumbleConnection when connection state is {State}");
 
             State = ConnectionStates.Connecting;
             Protocol.Initialise(this);
@@ -112,7 +112,7 @@ namespace MumbleSharp
             }
 
             _tcpProcessed = _tcp.Process();
-            _udpProcessed = _udp.IsConnected ? _udp.Process() : false;
+            _udpProcessed = _udp.IsConnected && _udp.Process();
             return _tcpProcessed || _udpProcessed;
         }
         //declared outside method for alloc optimization

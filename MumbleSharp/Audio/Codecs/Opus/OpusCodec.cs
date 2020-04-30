@@ -28,24 +28,28 @@ namespace MumbleSharp.Audio.Codecs.Opus
             //_encoder = new OpusEncoder(sampleRate, channels) { EnableForwardErrorCorrection = true };
         }
 
-        public byte[] Decode(byte[] encodedData)
+        public float[] Decode(byte[] encodedData, float[] emptyPcmBuffer)
         {
             if (encodedData == null)
             {
-                _decoder.Decode(null, 0, 0, new byte[_sampleRate / _frameSize], 0);
+                //_decoder.Decode(null, 0, 0, new byte[_sampleRate / _frameSize], 0);
+                _decoder.Decode(null, emptyPcmBuffer);
                 return null;
             }
 
-            int samples = Mumble.OpusDecoder.GetSamples(encodedData, 0, encodedData.Length, _sampleRate);
-            if (samples < 1)
-                return null;
+            //int samples = Mumble.OpusDecoder.GetSamples(encodedData, 0, encodedData.Length, _sampleRate);
+            //if (samples < 1)
+                //return null;
 
-            byte[] dst = new byte[samples * sizeof(ushort)];
+            //byte[] dst = new byte[samples * sizeof(ushort)];
             //_decoder.Decode(encodedData, 0, encodedData.Length, dst, 0);
-            int length = _decoder.Decode(encodedData, 0, encodedData.Length, dst, 0);
-            if (dst.Length != length)
-                Array.Resize(ref dst, length);
-            return dst;
+            //float[] emptyPcmBuffer = GetBufferToDecodeInto();
+            //int emptySampleNumRead = decoderState.Decoder.Decode(null, emptyPcmBuffer);
+            int length = _decoder.Decode(encodedData, emptyPcmBuffer);
+           // int length = _decoder.Decode(encodedData, 0, encodedData.Length, dst, 0);
+            //if (dst.Length != length)
+                //Array.Resize(ref dst, length);
+            return emptyPcmBuffer;
         }
 
         public IEnumerable<int> PermittedEncodingFrameSizes

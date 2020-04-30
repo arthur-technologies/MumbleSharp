@@ -5,7 +5,7 @@ namespace MumbleSharp.Audio.Codecs.CeltAlpha
     public class CeltBetaCodec
         : IVoiceCodec
     {
-        public byte[] Decode(byte[] encodedData)
+        public float[] Decode(byte[] encodedData ,float[] emptyPcmBuffer)
         {
             throw new NotImplementedException();
         }

@@ -5,7 +5,7 @@ namespace MumbleSharp.Audio.Codecs.Speex
     public class SpeexCodec
         : IVoiceCodec
     {
-        public byte[] Decode(byte[] encodedData)
+        public float[] Decode(byte[] encodedData, float[] emptyPcmBuffer)
         {
             throw new NotImplementedException();
         }

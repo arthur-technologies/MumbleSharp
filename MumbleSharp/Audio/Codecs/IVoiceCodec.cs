@@ -10,8 +10,9 @@ namespace MumbleSharp.Audio.Codecs
         /// decode the given frame of encoded data into 16 bit PCM
         /// </summary>
         /// <param name="encodedData"></param>
+        /// <param name="emptyPcmBuffer"></param>
         /// <returns></returns>
-        byte[] Decode(byte[] encodedData);
+        float[] Decode(byte[] encodedData, float[] emptyPcmBuffer);
 
         /// <summary>
         /// The set of allowed frame sizes for encoding

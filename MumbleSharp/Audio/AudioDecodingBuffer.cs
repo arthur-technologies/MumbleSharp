@@ -2,6 +2,8 @@
 //using NAudio.Wave;
 using System;
 using System.Collections.Generic;
+using Mumble;
+using UnityEngine;
 
 namespace MumbleSharp.Audio
 {
@@ -15,7 +17,7 @@ namespace MumbleSharp.Audio
         //public WaveFormat WaveFormat { get; private set; }
         private int _decodedOffset;
         private int _decodedCount;
-        private readonly byte[] _decodedBuffer;
+        private readonly float[] _decodedBuffer;
 
 
         /// <summary>
@@ -30,7 +32,7 @@ namespace MumbleSharp.Audio
             //WaveFormat = new WaveFormat(sampleRate, sampleBits, sampleChannels);
             _sampleRate = sampleRate;
             _frameSize = frameSize;
-            _decodedBuffer = new byte[sampleRate * (sampleBits / 8) * sampleChannels];
+            _decodedBuffer = new float[sampleRate * (sampleBits / 8) * sampleChannels];
         }
 
         private long _nextSequenceToDecode;
@@ -38,7 +40,7 @@ namespace MumbleSharp.Audio
 
         private IVoiceCodec _codec;
 
-        public int Read(byte[] buffer, int offset, int count)
+        public int Read(float[] buffer, int offset, int count)
         {
             int readCount = 0;
             while (readCount < count)
@@ -47,7 +49,13 @@ namespace MumbleSharp.Audio
 
                 //Try to decode some more data into the buffer
                 if (!FillBuffer())
+                {
                     break;
+                }
+                else
+                {
+                    Debug.Log("FillerBuffer FAlse");
+                }
             }
 
             if (readCount == 0)
@@ -117,10 +125,11 @@ namespace MumbleSharp.Audio
         /// <param name="offset"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        private int ReadFromBuffer(byte[] dst, int offset, int count)
+        private int ReadFromBuffer(float[] dst, int offset, int count)
         {
             //Copy as much data as we can from the buffer up to the limit
             int readCount = Math.Min(count, _decodedCount);
+           //int readCount = count;
             Array.Copy(_decodedBuffer, _decodedOffset, dst, offset, readCount);
             _decodedCount -= readCount;
             _decodedOffset += readCount;
@@ -134,6 +143,15 @@ namespace MumbleSharp.Audio
                 Buffer.BlockCopy(_decodedBuffer, _decodedOffset, _decodedBuffer, 0, _decodedCount);
 
             return readCount;
+        }
+        
+        const int SubBufferSize = MumbleConstants.OUTPUT_FRAME_SIZE * MumbleConstants.MAX_FRAMES_PER_PACKET * MumbleConstants.MAX_CHANNELS;
+
+        
+        private float[] GetBufferToDecodeInto()
+        {
+            //TODO use an allocator
+            return new float[SubBufferSize];
         }
 
         /// <summary>
@@ -150,8 +168,8 @@ namespace MumbleSharp.Audio
             ////Decode a null to indicate a dropped packet
             //if (packet.Value.Sequence != _nextSequenceToDecode)
             //    _codec.Decode(null);
-
-            var d = _codec.Decode(packet.Value.Data);
+            float[] emptyPcmBuffer = GetBufferToDecodeInto();
+            var d = _codec.Decode(packet.Value.Data, emptyPcmBuffer);
             _nextSequenceToDecode = packet.Value.Sequence + d.Length / (_sampleRate / _frameSize);
 
             Array.Copy(d, 0, _decodedBuffer, _decodedOffset, d.Length);
